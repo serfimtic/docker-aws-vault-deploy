@@ -16,8 +16,9 @@ RUN apt update && DEBIAN_FRONTEND=noninteractive apt -y install \
         git \
         awscli
 
-ADD serfimtic.cacert.pem /usr/local/share/ca-certificates/serfimtic.cacert.pem
-RUN chmod 644 /usr/local/share/ca-certificates/serfimtic.cacert.pem && update-ca-certificates
+ADD serfimtic.cacert.pem /usr/local/share/ca-certificates/serfimtic.cacert.crt
+RUN chmod 644 /usr/local/share/ca-certificates/serfimtic.cacert.crt
+RUN update-ca-certificates
 
 # Node 18
 RUN curl -sL https://deb.nodesource.com/setup_18.x | bash - \
@@ -27,6 +28,7 @@ RUN curl -sL https://deb.nodesource.com/setup_18.x | bash - \
 RUN curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
 RUN apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
 RUN apt-get update && apt-get -y install boundary vault
+RUN setcap -r /usr/bin/vault
 
 # AWS-CDK
 RUN npm install -g aws-cdk
